@@ -4,5 +4,6 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-eframe = "0.36.1"
-egui = "0.36.1"
+eframe = "0.33"
+egui = "0.33"
+egui-shadcn = "0.5.0"
