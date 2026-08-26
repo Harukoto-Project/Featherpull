@@ -1,9 +1,15 @@
+// core/configはフェーズ1(yt-dlp/ffmpeg連携・各UI画面)がまだ利用していないため、
+// 現時点では未使用コード警告が出る。基盤だけを先に用意する都合上、ここで抑制する。
+#[allow(dead_code)]
+mod config;
+#[allow(dead_code)]
+mod core;
 mod theme;
 
 use egui_shadcn::{
-    Button, ButtonRadius, ButtonVariant, CardProps, CardSize, CardVariant, HeadingAs,
-    HeadingProps, LightSwitchProps, SeparatorProps, TextProps, TypographyColor, card, heading,
-    light_switch, separator, text,
+    Button, ButtonRadius, ButtonVariant, CardProps, CardSize, CardVariant, HeadingAs, HeadingProps,
+    LightSwitchProps, SeparatorProps, TextProps, TypographyColor, card, heading, light_switch,
+    separator, text,
 };
 
 fn main() -> eframe::Result<()> {

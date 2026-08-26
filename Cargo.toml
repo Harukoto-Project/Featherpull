@@ -4,6 +4,14 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+chrono = { version = "0.4.45", features = ["serde"] }
+directories = "6.0.0"
 eframe = "0.33"
 egui = "0.33"
 egui-shadcn = "0.5.0"
+reqwest = { version = "0.13.4", default-features = false, features = ["rustls", "stream"] }
+serde = { version = "1.0.229", features = ["derive"] }
+thiserror = "2.0.20"
+tokio = { version = "1.53.1", features = ["rt-multi-thread", "macros", "process", "sync", "time"] }
+toml = "1.1.4"
+zip = "8.6.0"
