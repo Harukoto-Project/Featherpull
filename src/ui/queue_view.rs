@@ -69,16 +69,12 @@ fn show_job_card(ui: &mut egui::Ui, theme: &Theme, job: &Job) -> QueueViewAction
 
             match &job.status {
                 JobStatus::Downloading {
-                    progress: ratio,
+                    progress: percent,
                     speed,
                     eta,
                 } => {
                     ui.add_space(6.0);
-                    progress(
-                        ui,
-                        theme,
-                        ProgressProps::new(Some(progress_percent(*ratio))),
-                    );
+                    progress(ui, theme, ProgressProps::new(Some(clamp_percent(*percent))));
                     ui.horizontal(|ui| {
                         if let Some(speed) = speed {
                             text(
@@ -100,13 +96,9 @@ fn show_job_card(ui: &mut egui::Ui, theme: &Theme, job: &Job) -> QueueViewAction
                         }
                     });
                 }
-                JobStatus::Converting { progress: ratio } => {
+                JobStatus::Converting { progress: percent } => {
                     ui.add_space(6.0);
-                    progress(
-                        ui,
-                        theme,
-                        ProgressProps::new(Some(progress_percent(*ratio))),
-                    );
+                    progress(ui, theme, ProgressProps::new(Some(clamp_percent(*percent))));
                 }
                 JobStatus::Failed { message } => {
                     ui.add_space(6.0);
@@ -164,11 +156,11 @@ fn status_badge(status: &JobStatus) -> (&'static str, BadgeVariant) {
     }
 }
 
-/// `JobStatus`の進捗は0.0〜1.0の比率で保持しているため、`ProgressProps`が
-/// 期待する0〜100のパーセント値へスケール変換する。パース元(yt-dlpの出力)が
-/// 想定外の値(負数や1.0超)を返しても描画が壊れないようクランプする。
-fn progress_percent(ratio: f32) -> f32 {
-    (ratio * 100.0).clamp(0.0, 100.0)
+/// `JobStatus`の`progress`は`ytdlp`/`ffmpeg`連携側の実装(タスクA・B)が
+/// 既に0〜100のパーセント値として算出しているため、ここでは変換せずクランプのみ行う。
+/// パース元が想定外の値(負数や100超)を返しても描画が壊れないようにするための処理。
+fn clamp_percent(percent: f32) -> f32 {
+    percent.clamp(0.0, 100.0)
 }
 
 #[cfg(test)]
@@ -176,16 +168,16 @@ mod tests {
     use super::*;
 
     #[test]
-    fn progress_percent_converts_ratio_to_percentage() {
-        assert_eq!(progress_percent(0.0), 0.0);
-        assert_eq!(progress_percent(0.5), 50.0);
-        assert_eq!(progress_percent(1.0), 100.0);
+    fn clamp_percent_keeps_in_range_values_unchanged() {
+        assert_eq!(clamp_percent(0.0), 0.0);
+        assert_eq!(clamp_percent(50.0), 50.0);
+        assert_eq!(clamp_percent(100.0), 100.0);
     }
 
     #[test]
-    fn progress_percent_clamps_out_of_range_values() {
-        assert_eq!(progress_percent(-0.5), 0.0);
-        assert_eq!(progress_percent(1.5), 100.0);
+    fn clamp_percent_clamps_out_of_range_values() {
+        assert_eq!(clamp_percent(-5.0), 0.0);
+        assert_eq!(clamp_percent(150.0), 100.0);
     }
 
     #[test]
