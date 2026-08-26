@@ -220,6 +220,10 @@ impl YtdlpProcess {
 
 /// yt-dlpの実行結果として蓄積された標準エラー出力。
 pub struct YtdlpOutcome {
+    /// `run_download`の呼び出し元がエラー診断に使うためのフィールド。キュー実行経路
+    /// (`ProcessJobExecutor`)はキャンセル制御のため`wait_with_progress`を直接使い、
+    /// この構造体自体を経由しないので、現状GUIからは読み取っていない。
+    #[allow(dead_code)]
     pub stderr: String,
 }
 
@@ -227,6 +231,9 @@ pub struct YtdlpOutcome {
 ///
 /// キャンセルが不要な単純な呼び出しのための便利関数。キャンセルが必要な場合は
 /// `YtdlpProcess::spawn`と`wait_with_progress`を直接使い、ハンドルを保持しておくこと。
+/// (`ProcessJobExecutor`はキャンセル対応のため後者を使うので、この関数自体は
+/// 単発実行のCLI的な用途向けに公開APIとして残している)
+#[allow(dead_code)]
 pub async fn run_download(
     ytdlp_path: &Path,
     url: &str,

@@ -285,14 +285,20 @@ impl LogBuffer {
         self.entries.clear();
     }
 
+    // `len`/`is_empty`/`capacity`は`VecDeque`同様の基本APIとして公開している。
+    // 現状のログパネルは`as_slice`経由で全件描画するだけで件数表示等は行っていないため
+    // GUI側からは未参照だが、件数バッジ等を追加する際にそのまま使える窓口として残す。
+    #[allow(dead_code)]
     pub fn len(&self) -> usize {
         self.entries.len()
     }
 
+    #[allow(dead_code)]
     pub fn is_empty(&self) -> bool {
         self.entries.is_empty()
     }
 
+    #[allow(dead_code)]
     pub fn capacity(&self) -> usize {
         self.capacity
     }

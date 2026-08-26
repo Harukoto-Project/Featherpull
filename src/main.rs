@@ -1,16 +1,8 @@
-// core/configはフェーズ1(yt-dlp/ffmpeg連携・各UI画面)がまだ利用していないため、
-// 現時点では未使用コード警告が出る。基盤だけを先に用意する都合上、ここで抑制する。
-#[allow(dead_code)]
+mod app;
 mod config;
-#[allow(dead_code)]
 mod core;
 mod theme;
-
-use egui_shadcn::{
-    Button, ButtonRadius, ButtonVariant, CardProps, CardSize, CardVariant, HeadingAs, HeadingProps,
-    LightSwitchProps, SeparatorProps, TextProps, TypographyColor, card, heading, light_switch,
-    separator, text,
-};
+mod ui;
 
 fn main() -> eframe::Result<()> {
     eframe::run_native(
@@ -18,7 +10,7 @@ fn main() -> eframe::Result<()> {
         eframe::NativeOptions::default(),
         Box::new(|cc| {
             setup_custom_fonts(&cc.egui_ctx);
-            Ok(Box::new(FeatherpullApp::default()))
+            Ok(Box::new(app::App::new()))
         }),
     )
 }
@@ -48,67 +40,4 @@ fn setup_custom_fonts(ctx: &egui::Context) {
     }
 
     ctx.set_fonts(fonts);
-}
-
-#[derive(Default)]
-struct FeatherpullApp {
-    dark_mode: bool,
-}
-
-impl eframe::App for FeatherpullApp {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        let theme = theme::build_theme(self.dark_mode);
-
-        let frame = egui::Frame::default()
-            .fill(theme.palette.background)
-            .inner_margin(egui::Margin::same(24));
-
-        egui::CentralPanel::default().frame(frame).show(ctx, |ui| {
-            ui.horizontal(|ui| {
-                heading(
-                    ui,
-                    &theme,
-                    HeadingProps::new("Featherpull").as_tag(HeadingAs::H1),
-                );
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    if light_switch(ui, &theme, LightSwitchProps::new(self.dark_mode)).clicked() {
-                        self.dark_mode = !self.dark_mode;
-                    }
-                });
-            });
-
-            text(
-                ui,
-                &theme,
-                TextProps::new("yt-dlp / ffmpeg GUIラッパー").color(TypographyColor::Muted),
-            );
-
-            ui.add_space(16.0);
-            separator(ui, &theme, SeparatorProps::default());
-            ui.add_space(16.0);
-
-            card(
-                ui,
-                &theme,
-                CardProps::default()
-                    .size(CardSize::Size4)
-                    .variant(CardVariant::Surface)
-                    .rounding(egui::CornerRadius::same(16))
-                    .heading("開発中")
-                    .description("ダウンロードキューやフォーマット設定は近日実装予定です。"),
-                |ui| {
-                    ui.horizontal(|ui| {
-                        Button::new("はじめる")
-                            .variant(ButtonVariant::Solid)
-                            .radius(ButtonRadius::Large)
-                            .show(ui, &theme);
-                        Button::new("設定")
-                            .variant(ButtonVariant::Soft)
-                            .radius(ButtonRadius::Large)
-                            .show(ui, &theme);
-                    });
-                },
-            );
-        });
-    }
 }
