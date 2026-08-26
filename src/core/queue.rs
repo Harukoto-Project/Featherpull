@@ -30,6 +30,10 @@ use super::ytdlp::YtdlpProcess;
 /// 制限する想定のため、定数として公開しておく。
 pub const MIN_CONCURRENCY: u32 = 1;
 pub const MAX_CONCURRENCY: u32 = 10;
+/// `Config::default`の既定値と一致させるための公開定数。GUI側は`Config`側の
+/// デフォルトをそのまま使うため現状は未参照だが、設定リセットUI等を追加する際に
+/// 同じ値をここから取れるようにしておく。
+#[allow(dead_code)]
 pub const DEFAULT_CONCURRENCY: u32 = 3;
 
 fn clamp_concurrency(value: u32) -> u32 {
