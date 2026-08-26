@@ -1,0 +1,14 @@
+# AIエージェント用ガイダンス(非公開情報を含める可能性があるため追跡しない)
+CLAUDE.md
+
+# Rust
+# (アプリケーションのためCargo.lockはコミット対象とする)
+/target/
+**/*.rs.bk
+*.pdb
+
+# エディタ・OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
